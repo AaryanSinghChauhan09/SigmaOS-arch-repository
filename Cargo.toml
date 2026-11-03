@@ -1,0 +1,9 @@
+[package]
+name = "arch-repository"
+version = "0.1.0"
+edition = "2021"
+description = "SigmaOS SigmaOS-arch-repository component - Inspired by Arch Linux and Debian"
+license = "MIT"
+repository = "https://github.com/AaryanSinghChauhan09/SigmaOS-arch-repository"
+
+[dependencies]
