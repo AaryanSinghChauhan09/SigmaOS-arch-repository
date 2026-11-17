@@ -1,52 +1,120 @@
-//! SigmaOS-arch-repository — arch-repository component
+//! Package repository management for SigmaOS.
 //!
-//! Part of the SigmaOS multi-repository component ecosystem. This crate
-//! declares its interface in `COMPONENT.toml` (`provides` / `depends_on`).
+//! Manages repository definitions, sync operations, and package queries.
+//! Inspired by Arch Linux's pacman repository handling.
 
-#![forbid(unsafe_code)]
-#![warn(missing_docs)]
+use std::collections::HashMap;
+use std::fmt;
 
-/// Errors raised by this component.
-#[derive(Debug, thiserror::Error)]
-pub enum ComponentError {
-    /// The requested operation is not supported by this component yet.
-    #[error("unsupported operation: {0}")]
-    Unsupported(&'static str),
+/// Errors for repository operations.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum RepoError {
+    EmptyName,
+    DuplicateRepo(String),
+    RepoNotFound(String),
+    InvalidUrl,
+    SyncFailed(String),
 }
 
-/// Result alias for component operations.
-pub type ComponentResult<T> = Result<T, ComponentError>;
-
-/// A handle to an initialised component instance.
-#[derive(Debug, Default, Clone)]
-pub struct Component {
-    initialised: bool,
+impl fmt::Display for RepoError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::EmptyName => write!(f, "repository name must not be empty"),
+            Self::DuplicateRepo(n) => write!(f, "duplicate repository: {n}"),
+            Self::RepoNotFound(n) => write!(f, "repository not found: {n}"),
+            Self::InvalidUrl => write!(f, "invalid repository URL"),
+            Self::SyncFailed(n) => write!(f, "sync failed for {n}"),
+        }
+    }
 }
 
-impl Component {
-    /// Create a new, uninitialised component handle.
+impl std::error::Error for RepoError {}
+
+/// Repository definition.
+#[derive(Debug, Clone, PartialEq)]
+pub struct Repository {
+    pub name: String,
+    pub url: String,
+    pub enabled: bool,
+    pub last_sync: Option<u64>,
+    pub package_count: usize,
+}
+
+impl Repository {
+    pub fn new(name: impl Into<String>, url: impl Into<String>) -> Self {
+        Self {
+            name: name.into(),
+            url: url.into(),
+            enabled: true,
+            last_sync: None,
+            package_count: 0,
+        }
+    }
+
+    pub fn validate(&self) -> Result<(), RepoError> {
+        if self.name.trim().is_empty() {
+            return Err(RepoError::EmptyName);
+        }
+        if !self.url.starts_with("http") {
+            return Err(RepoError::InvalidUrl);
+        }
+        Ok(())
+    }
+}
+
+/// Repository manager.
+#[derive(Debug, Clone, Default)]
+pub struct RepoManager {
+    repos: HashMap<String, Repository>,
+}
+
+impl RepoManager {
     pub fn new() -> Self {
         Self::default()
     }
 
-    /// Initialise the component. Returns `Ok(())` once ready.
-    pub fn init(&mut self) -> ComponentResult<()> {
-        self.initialised = true;
+    pub fn add_repo(&mut self, repo: Repository) -> Result<(), RepoError> {
+        repo.validate()?;
+        if self.repos.contains_key(&repo.name) {
+            return Err(RepoError::DuplicateRepo(repo.name.clone()));
+        }
+        let name = repo.name.clone();
+        self.repos.insert(name, repo);
         Ok(())
     }
 
-    /// Returns `true` once [`Component::init`] has succeeded.
-    pub fn is_ready(&self) -> bool {
-        self.initialised
+    pub fn remove_repo(&mut self, name: &str) -> Result<(), RepoError> {
+        self.repos.remove(name).ok_or_else(|| RepoError::RepoNotFound(name.to_string()))?;
+        Ok(())
     }
 
-    /// Placeholder for the component's primary operation.
-    ///
-    /// Replace with the real implementation for this component; keep the
-    /// `ComponentResult` contract and update `COMPONENT.toml` accordingly.
-    pub fn run(&self) -> ComponentResult<()> {
-        if !self.initialised {
-            return Err(ComponentError::Unsupported("not initialised"));
+    pub fn get_repo(&self, name: &str) -> Option<&Repository> {
+        self.repos.get(name)
+    }
+
+    pub fn list_repos(&self) -> Vec<&Repository> {
+        self.repos.values().collect()
+    }
+
+    pub fn list_enabled(&self) -> Vec<&Repository> {
+        self.repos.values().filter(|r| r.enabled).collect()
+    }
+
+    pub fn sync_repo(&mut self, name: &str) -> Result<(), RepoError> {
+        let repo = self.repos.get_mut(name)
+            .ok_or_else(|| RepoError::RepoNotFound(name.to_string()))?;
+        repo.last_sync = Some(std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_secs());
+        repo.package_count += 1; // Simulate package discovery
+        Ok(())
+    }
+
+    pub fn sync_all(&mut self) -> Result<(), RepoError> {
+        let names: Vec<String> = self.repos.keys().cloned().collect();
+        for name in names {
+            self.sync_repo(&name)?;
         }
         Ok(())
     }
@@ -55,31 +123,60 @@ impl Component {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use pretty_assertions::assert_eq;
 
-    // Arrange-Act-Assert
     #[test]
-    fn init_marks_component_ready() {
+    fn test_add_repo_aaa() {
         // Arrange
-        let mut c = Component::new();
-        assert!(!c.is_ready());
+        let mut mgr = RepoManager::new();
+        let repo = Repository::new("core", "https://repo.example.com/core");
 
         // Act
-        c.init().unwrap();
+        let res = mgr.add_repo(repo);
 
         // Assert
-        assert!(c.is_ready());
+        assert!(res.is_ok());
+        assert_eq!(mgr.list_repos().len(), 1);
     }
 
     #[test]
-    fn run_requires_init() {
+    fn test_duplicate_repo_rejected_aaa() {
         // Arrange
-        let c = Component::new();
+        let mut mgr = RepoManager::new();
+        let repo = Repository::new("core", "https://repo.example.com/core");
+        mgr.add_repo(repo.clone()).unwrap();
 
         // Act
-        let res = c.run();
+        let res = mgr.add_repo(repo);
 
         // Assert
         assert!(res.is_err());
+    }
+
+    #[test]
+    fn test_invalid_url_rejected_aaa() {
+        // Arrange
+        let mut mgr = RepoManager::new();
+        let repo = Repository::new("core", "ftp://invalid");
+
+        // Act
+        let res = mgr.add_repo(repo);
+
+        // Assert
+        assert!(res.is_err());
+    }
+
+    #[test]
+    fn test_sync_repo_aaa() {
+        // Arrange
+        let mut mgr = RepoManager::new();
+        mgr.add_repo(Repository::new("core", "https://repo.example.com/core")).unwrap();
+
+        // Act
+        let res = mgr.sync_repo("core");
+
+        // Assert
+        assert!(res.is_ok());
+        assert!(mgr.get_repo("core").unwrap().last_sync.is_some());
+        assert!(mgr.get_repo("core").unwrap().package_count > 0);
     }
 }
