@@ -5,6 +5,7 @@
 
 use std::collections::HashMap;
 use std::fmt;
+pub mod sigmarepositorymanager;
 
 /// Errors for repository operations.
 #[derive(Debug, Clone, PartialEq, Eq)]
