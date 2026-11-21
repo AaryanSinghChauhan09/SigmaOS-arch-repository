@@ -1,4 +1,4 @@
-# SigmaOS-arch-repository
+# SigmaOS-repository
 
 SigmaOS component repository
 

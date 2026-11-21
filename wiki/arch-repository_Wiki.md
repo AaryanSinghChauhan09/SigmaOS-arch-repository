@@ -1,50 +1,50 @@
-# SigmaOS-SigmaOS-arch-repository Component Wiki
+# SigmaOS-SigmaOS-repository Component Wiki
 
 ## Overview
-SigmaOS-SigmaOS-arch-repository provides Package repository management with sync operations and package queries for the SigmaOS operating system. It demonstrates the subsystem and integration within the SigmaOS ecosystem, following the principles of clear abstraction and deterministic initialization.
+SigmaOS-SigmaOS-repository provides Package repository management with sync operations and package queries for the SigmaOS operating system. It demonstrates the subsystem and integration within the SigmaOS ecosystem, following the principles of clear abstraction and deterministic initialization.
 
 ## Principles
 - Single Responsibility
-- SigmaOS-arch-repository Abstraction
-- Fail-Fast on SigmaOS-arch-repository Initialization Errors
-- Deterministic SigmaOS-arch-repository Setup
-- Clear Abstraction Over SigmaOS-arch-repository APIs
-- Composition over Inheritance for SigmaOS-arch-repository extensions
+- SigmaOS-repository Abstraction
+- Fail-Fast on SigmaOS-repository Initialization Errors
+- Deterministic SigmaOS-repository Setup
+- Clear Abstraction Over SigmaOS-repository APIs
+- Composition over Inheritance for SigmaOS-repository extensions
 
 ## Architecture
-SigmaOS-SigmaOS-arch-repository follows a SigmaOS-arch-repository pattern:
-- **SigmaOS-arch-repository Core**: Provides SigmaOS-arch-repository support, SigmaOS-arch-repository management, and SigmaOS-arch-repository tracking
-- **Management**: Supports SigmaOS-arch-repository management, SigmaOS-arch-repository configuration, and SigmaOS-arch-repository lifecycle
-- **Tracking**: Supports SigmaOS-arch-repository status, SigmaOS-arch-repository tracking, and SigmaOS-arch-repository lifecycle
-- **Error Handling**: Fail-fast on invalid SigmaOS-arch-repository configurations or unsupported SigmaOS-arch-repository types
+SigmaOS-SigmaOS-repository follows a SigmaOS-repository pattern:
+- **SigmaOS-repository Core**: Provides SigmaOS-repository support, SigmaOS-repository management, and SigmaOS-repository tracking
+- **Management**: Supports SigmaOS-repository management, SigmaOS-repository configuration, and SigmaOS-repository lifecycle
+- **Tracking**: Supports SigmaOS-repository status, SigmaOS-repository tracking, and SigmaOS-repository lifecycle
+- **Error Handling**: Fail-fast on invalid SigmaOS-repository configurations or unsupported SigmaOS-repository types
 
 ## API
 The component provides the following public APIs:
--  - Manage a SigmaOS-arch-repository by given configuration
--  - Register a SigmaOS-arch-repository by given name
--  - Get SigmaOS-arch-repository status and SigmaOS-arch-repository availability
--  - Track SigmaOS-arch-repository management and SigmaOS-arch-repository tracking
-- Error types for SigmaOS-arch-repository failure scenarios or unsupported SigmaOS-arch-repository types
+-  - Manage a SigmaOS-repository by given configuration
+-  - Register a SigmaOS-repository by given name
+-  - Get SigmaOS-repository status and SigmaOS-repository availability
+-  - Track SigmaOS-repository management and SigmaOS-repository tracking
+- Error types for SigmaOS-repository failure scenarios or unsupported SigmaOS-repository types
 
 ## Test Structure (Arrange-Act-ASSERT)
 All tests follow the AAA pattern:
-1. **Arrange**: Set up test environment with specific SigmaOS-arch-repository configuration
-2. **Act**: Execute the code under test (SigmaOS-arch-repository init, SigmaOS-arch-repository management)
-3. **Assert**: Verify the expected SigmaOS-arch-repository results
+1. **Arrange**: Set up test environment with specific SigmaOS-repository configuration
+2. **Act**: Execute the code under test (SigmaOS-repository init, SigmaOS-repository management)
+3. **Assert**: Verify the expected SigmaOS-repository results
 
 Example:
 
 
 ## Development
 - Follows Rust best practices with 
-- SigmaOS-arch-repository initialization is best-effort; gracefully degrades on unsupported configurations
-- Comprehensive error types for all SigmaOS-arch-repository failure scenarios
-- Unit tests provided for SigmaOS-arch-repository management and configuration
-- Integration tests for full SigmaOS-arch-repository system with actual SigmaOS-arch-repository integration
+- SigmaOS-repository initialization is best-effort; gracefully degrades on unsupported configurations
+- Comprehensive error types for all SigmaOS-repository failure scenarios
+- Unit tests provided for SigmaOS-repository management and configuration
+- Integration tests for full SigmaOS-repository system with actual SigmaOS-repository integration
 
 ## TODO
-- Add support for additional SigmaOS-arch-repository types
-- Expand SigmaOS-arch-repository capabilities (SigmaOS-arch-repository features, SigmaOS-arch-repository configurations, SigmaOS-arch-repository tracking)
-- Add lifecycle features (SigmaOS-arch-repository tracking, SigmaOS-arch-repository lifecycle, SigmaOS-arch-repository propagation)
-- Create integration tests with actual SigmaOS-arch-repository systems and SigmaOS-arch-repository integration
-- Implement SigmaOS-arch-repository persistence and SigmaOS-arch-repository state management
+- Add support for additional SigmaOS-repository types
+- Expand SigmaOS-repository capabilities (SigmaOS-repository features, SigmaOS-repository configurations, SigmaOS-repository tracking)
+- Add lifecycle features (SigmaOS-repository tracking, SigmaOS-repository lifecycle, SigmaOS-repository propagation)
+- Create integration tests with actual SigmaOS-repository systems and SigmaOS-repository integration
+- Implement SigmaOS-repository persistence and SigmaOS-repository state management

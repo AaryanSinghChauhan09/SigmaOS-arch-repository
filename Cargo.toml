@@ -1,13 +1,13 @@
 [package]
-name = "sigmaos-arch-repository"
+name = "sigmaos-repository"
 version = "0.1.0"
 edition = "2021"
 description = "Package repository management for SigmaOS"
 license = "MIT"
-repository = "https://github.com/AaryanSinghChauhan09/SigmaOS-arch-repository"
+repository = "https://github.com/AaryanSinghChauhan09/SigmaOS-repository"
 
 [dependencies]
 
 [lib]
-name = "sigmaos_arch_repository"
+name = "sigmaos_repository"
 path = "src/lib.rs"

@@ -1,7 +1,7 @@
-// Integration test for SigmaOS-arch-repository
+// Integration test for SigmaOS-repository
 // Verifies the crate builds and links as a dependency.
 
-use sigmaos_arch_repository::{RepoManager, Repository};
+use sigmaos_repository::{RepoManager, Repository};
 
 #[test]
 fn crate_links_and_runs() {
